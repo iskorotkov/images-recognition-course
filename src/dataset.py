@@ -1,7 +1,9 @@
+from typing import List, Tuple
+
 import pandas as pd
 
 
-def from_file(path):
+def from_file(path: str) -> Tuple[List, List, List]:
     data = pd.read_csv(path)
 
     head = data.head(n=1)
@@ -11,7 +13,7 @@ def from_file(path):
     return head, x, labels
 
 
-def split(x, labels, ratio=0.9):
+def split(x: List, labels: List, ratio: int = 0.9) -> Tuple[Tuple[List, List], Tuple[List, List]]:
     if len(x) != len(labels):
         raise ValueError("len(x) != len(labels)")
 

@@ -1,28 +1,29 @@
 import math
+from typing import List
 
 
-def euclidean(a, b):
+def euclidean(a: List, b: List) -> float:
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
 
     return math.sqrt(sum(math.pow(x - y, 2) for x, y in zip(a, b)))
 
 
-def hamming(a, b):
+def hamming(a: List, b: List) -> float:
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
 
     return sum(x != y for x, y in zip(a, b)) / len(a)
 
 
-def manhattan(a, b):
+def manhattan(a: List, b: List) -> float:
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
 
     return sum(math.fabs(x - y) for x, y in zip(a, b))
 
 
-def jaccard(a, b):
+def jaccard(a: List, b: List) -> float:
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
 
@@ -34,7 +35,7 @@ def jaccard(a, b):
     return 1 - intersect / union
 
 
-def cosine(a, b):
+def cosine(a: List, b: List) -> float:
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
 
