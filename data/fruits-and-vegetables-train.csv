@@ -1,0 +1,36 @@
+name,vitamin A %,vitamin C %,calcium %,iron %,magnesium %,calories (per 100g),potassium (mg),protein (g),fiber (g),classification
+apple,1,7,0,0,1,52,107,"0,3","2,40",fruit
+apricot,38,16,1,2,2,48,259,"1,4","2,00",fruit
+avocado,2,16,1,3,7,160,485,2,"7,00",fruit
+banana,1,14,0,1,6,89,358,"1,1","2,60",fruit
+beetroot,0,8,1,1,5,43,325,"1,6","2,80",vegetable
+blackberry,4,35,2,3,5,43,163,"1,4","5,00",fruit
+blueberry,1,16,0,1,1,57,77,"0,7","2,40",fruit
+broccoli,12,148,4,3,5,34,316,"2,8","2,60",vegetable
+brussels sprouts,15,141,4,7,5,43,389,"3,4","3,80",vegetable
+carrot,334,9,3,1,3,41,320,"0,9","2,80",vegetable
+cauliflower,0,80,2,2,3,25,299,"1,9","2,00",vegetable
+celery,8,5,4,1,2,16,260,"0,7","1,60",vegetable
+cherry,26,16,1,1,2,50,173,1,"1,60",fruit
+cucumber,2,4,1,1,3,16,147,"0,7","0,50",vegetable
+eggplant,0,3,0,1,3,25,229,1,"3,00",vegetable
+elderberry,12,60,3,8,1,73,280,"0,7","7,00",fruit
+grape,2,6,1,1,1,67,191,"0,6","0,90",fruit
+leek,33,20,5,11,7,61,180,"1,5","1,80",vegetable
+lemon,0,88,2,3,2,29,138,"1,1","2,80",fruit
+mango,21,60,1,1,2,60,168,"0,8","1,60",fruit
+orange,4,88,4,0,2,47,181,"0,9","2,40",fruit
+pineapple,1,79,1,1,3,50,109,"0,5","1,40",fruit
+peach,6,11,0,1,2,39,190,"0,9","1,50",fruit
+pear,0,7,0,1,1,57,116,"0,4","3,10",fruit
+pepper,7,134,1,1,2,20,175,"0,9","1,70",vegetable
+plum,6,15,0,1,1,46,157,"0,7","1,40",fruit
+pomegranate,0,17,1,1,3,83,236,"1,7","4,00",fruit
+pumpkin,170,15,2,4,3,26,340,1,"0,50",vegetable
+spinach,187,46,9,15,19,23,558,"2,9","2,20",vegetable
+strawberry,0,97,1,2,3,33,153,"0,7","2,00",fruit
+sweet potato,283,4,3,3,6,86,337,"1,6","3,00",vegetable
+tangerine,13,44,3,1,3,53,166,"0,8","1,80",fruit
+tomato,16,22,1,1,2,18,237,"0,9","1,20",fruit
+watermelon,11,13,0,1,2,30,112,"0,6","0,40",vegetable
+zucchini,4,29,1,2,4,17,261,"1,2","1,00",vegetable
