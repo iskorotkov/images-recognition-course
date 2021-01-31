@@ -1,4 +1,3 @@
-import math
 import random
 import unittest
 
@@ -11,7 +10,7 @@ class DistanceTest(unittest.TestCase):
     @staticmethod
     def random_lists():
         def random_list():
-            return [random.randint(-10, 10) for _ in range(10)]
+            return [random.randint(-100, 100) for _ in range(100)]
 
         return random_list(), random_list()
 
@@ -46,18 +45,7 @@ class DistanceTest(unittest.TestCase):
             # noinspection PyTypeChecker
             expected = scipy.jaccard(x, y)
             actual = distance.jaccard(x, y)
-
-            if math.fabs(expected - actual) >= 1e-6:
-                self.fail(f"x = {x}, y = {y}")
             self.assertAlmostEqual(expected, actual)
-
-    def test_jaccard_simple(self):
-        x, y = [1, 0, 0], [0, 0, 0]
-
-        # noinspection PyTypeChecker
-        expected = scipy.jaccard(x, y)
-        actual = distance.jaccard(x, y)
-        self.assertAlmostEqual(expected, actual)
 
     def test_cosine(self):
         for _ in range(100):
