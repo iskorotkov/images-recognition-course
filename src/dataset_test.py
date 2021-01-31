@@ -32,7 +32,7 @@ class SplitTest(unittest.TestCase):
             x = [random.randint(-100, 100) for _ in range(random.randint(2, 20))]
             labels = [random.randint(-100, 100) for _ in range(len(x))]
 
-            (x1, x2), (labels1, labels2) = dataset.split(x, labels, ratio)
+            (x1, labels1), (x2, labels2) = dataset.split(x, labels, ratio)
 
             self.assertTrue(math.floor(len(x) * ratio) <= len(x1) <= math.ceil(len(x) * ratio))
             self.assertTrue(math.floor(len(labels) * ratio) <= len(labels1) <= math.ceil(len(labels) * ratio))

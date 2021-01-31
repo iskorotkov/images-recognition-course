@@ -18,4 +18,4 @@ def split(x: List, labels: List, ratio: int = 0.9) -> Tuple[Tuple[List, List], T
         raise ValueError("len(x) != len(labels)")
 
     edge = int(len(x) * ratio)
-    return (x[:edge], x[edge:]), (labels[:edge], labels[edge:])
+    return (x[:edge], labels[:edge]), (x[edge:], labels[edge:])
