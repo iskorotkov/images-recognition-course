@@ -1,4 +1,4 @@
-import abc
+﻿import abc
 import random
 from typing import List
 
@@ -6,7 +6,15 @@ import distance
 
 
 class Strategy:
+    """
+    Base class for all clustering strategies
+    """
+
     def __init__(self, n_clusters: int = 2) -> None:
+        """
+        Strategy constructor
+        :param n_clusters: number of clusters in provided datasets
+        """
         super().__init__()
         if n_clusters < 1:
             raise ValueError("number of clusters must be >= 1")
@@ -16,9 +24,18 @@ class Strategy:
 
     @abc.abstractmethod
     def fit(self, data: List) -> None:
+        """
+        Train strategy on a provided dataset
+        :param data: dataset to train on
+        """
         raise NotImplementedError
 
     def predict(self, data: List) -> List[int]:
+        """
+        Assign dataset items to closest clusters
+        :param data: items to assign to clusters
+        :return: labels (cluster indexes) for each dataset item
+        """
         labels = []
         for item in data:
             nearest_center_index = 0
@@ -36,6 +53,10 @@ class Strategy:
 
 
 class Maximin(Strategy):
+    """
+    Maximin clustering strategy
+    """
+
     def __init__(self, n_clusters: int = 2) -> None:
         super().__init__(n_clusters)
 
@@ -59,6 +80,10 @@ class Maximin(Strategy):
 
 
 class KMeans(Strategy):
+    """
+    K-Means clustering strategy
+    """
+
     def __init__(self, n_clusters: int = 2) -> None:
         super().__init__(n_clusters)
 
@@ -84,7 +109,12 @@ class KMeans(Strategy):
             self.cluster_centers_[i] = KMeans.mean(assigned)
 
     @staticmethod
-    def mean(assigned: List):
+    def mean(assigned: List) -> List:
+        """
+        Find mean point of the cluster
+        :param assigned: items assigned to the cluster
+        :return: cluster mean point
+        """
         if len(assigned) == 0:
             raise ValueError("list must contain at least 1 element")
 
