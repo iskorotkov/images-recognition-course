@@ -13,7 +13,7 @@ def from_file(path: str) -> Tuple[List, List, List]:
     return head, x, labels
 
 
-def split(x: List, labels: List, ratio: int = 0.9) -> Tuple[Tuple[List, List], Tuple[List, List]]:
+def split(x: List, labels: List, ratio: float = 0.9) -> Tuple[Tuple[List, List], Tuple[List, List]]:
     if len(x) != len(labels):
         raise ValueError("len(x) != len(labels)")
 
