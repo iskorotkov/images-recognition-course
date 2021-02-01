@@ -1,5 +1,5 @@
 from typing import List, Tuple
-
+import random
 import pandas as pd
 
 
@@ -31,3 +31,18 @@ def split(x: List, labels: List, ratio: float = 0.9) -> Tuple[Tuple[List, List],
 
     edge = int(len(x) * ratio)
     return (x[:edge], labels[:edge]), (x[edge:], labels[edge:])
+
+
+def shuffle(x: List, labels: List) -> Tuple[List, List]:
+    """
+    Shuffle dataset and labels
+    :param x: dataset values
+    :param labels: dataset labels
+    :return: shuffled dataset and labels
+    """
+    if len(x) != len(labels):
+        raise ValueError("len(x) != len(labels)")
+
+    indices = list(range(len(x)))
+    random.shuffle(indices)
+    return [x[i] for i in indices], [labels[i] for i in indices]

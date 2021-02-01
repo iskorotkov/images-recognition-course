@@ -1,6 +1,7 @@
-import math
 import random
 import unittest
+
+import math
 
 import dataset
 
@@ -42,6 +43,19 @@ class SplitTest(unittest.TestCase):
 
             self.assertListEqual(x, x1)
             self.assertListEqual(labels, labels1)
+
+
+class ShuffleTest(unittest.TestCase):
+    def test_shuffle(self):
+        for _ in range(100):
+            ratio = random.randint(5, 95) / 100
+            x = [random.randint(-100, 100) for _ in range(random.randint(2, 20))]
+            labels = [random.randint(-100, 100) for _ in range(len(x))]
+
+            shuffled_x, shuffled_labels = dataset.shuffle(x, labels)
+
+            self.assertEqual(len(x), len(shuffled_x))
+            self.assertEqual(len(labels), len(shuffled_labels))
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import random
 from typing import Tuple
 
 import math
@@ -5,6 +6,8 @@ from prettytable import PrettyTable
 
 import dataset
 import distance
+
+random.seed(0)
 
 
 def find_closest(item, data, method) -> Tuple[int, float]:
@@ -29,6 +32,7 @@ def find_closest(item, data, method) -> Tuple[int, float]:
 
 # Prepare dataset
 head, x, labels = dataset.from_file('../data/iris.csv')
+x, labels = dataset.shuffle(x, labels)
 (train_x, train_labels), (test_x, test_labels) = dataset.split(x, labels, ratio=0.9)
 
 train_len = len(train_x)
