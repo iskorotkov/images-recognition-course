@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 from src import dataset, cluster
 
 # Parameters to tweak
-n_clusters = 7
+n_clusters = 3
 n_iterations = 5
 
 # Prepare dataset
@@ -59,6 +59,9 @@ show_clusters('custom k-means', cluster.KMeans, x, n_clusters)
 
 plt.subplot(2, 3, 3)
 show_clusters('sklearn k-means', sklearn.KMeans, x, n_clusters)
+
+plt.subplot(2, 3, 4)
+show_clusters('custom k-maximin', cluster.KMaximin, x, n_clusters)
 
 plt.subplot(2, 3, 5)
 show_clusters(f'custom k-means ({n_iterations} iterations)', cluster.KMeans, x, n_clusters, n_iterations)

@@ -61,8 +61,73 @@ class Maximin(Strategy):
 
     def __init__(self, n_clusters: int = 2) -> None:
         super().__init__(n_clusters)
+        self.distances_sum_ = 0
 
     def fit(self, data: List) -> None:
+        if len(data) == 0:
+            return
+
+        if self.n_clusters == 1:
+            return
+
+        if self.n_clusters == len(data):
+            return
+
+        if self.n_clusters > len(data):
+            self.n_clusters = len(data)
+
+        self.cluster_centers_ = [data[0]]
+        while True:
+            furthest_item = data[0]
+            max_distance = 0
+
+            for item in data:
+                distance_to_center = math.inf
+
+                for center in self.cluster_centers_:
+                    cur_distance = distance.euclidean(item, center)
+                    distance_to_center = min(distance_to_center, cur_distance)
+
+                if distance_to_center > max_distance:
+                    max_distance = distance_to_center
+                    furthest_item = item
+
+            if self.should_stop(max_distance):
+                break
+            else:
+                self.distances_sum_ += max_distance
+                self.cluster_centers_.append(furthest_item)
+
+        return
+
+    def should_stop(self, cur_distance: float) -> bool:
+        """
+        Determine whether should stop finding clusters
+        :param cur_distance: last calculated maximin distance
+        :return: whether should stop clustering
+        """
+        return cur_distance < self.mean_distance() or len(self.cluster_centers_) >= self.n_clusters
+
+    def mean_distance(self) -> float:
+        """
+        Mean of distances between found cluster centers
+        :return: distances mean
+        """
+        return self.distances_sum_ / len(self.cluster_centers_)
+
+
+class KMaximin(Strategy):
+    """
+    K-Maximin clustering strategy
+    """
+
+    def __init__(self, n_clusters: int = 2) -> None:
+        super().__init__(n_clusters)
+
+    def fit(self, data: List) -> None:
+        if len(data) == 0:
+            return
+
         if self.n_clusters == 1:
             return
 
@@ -90,6 +155,9 @@ class KMeans(Strategy):
         super().__init__(n_clusters)
 
     def fit(self, data: List) -> None:
+        if len(data) == 0:
+            return
+
         if self.n_clusters == 1:
             return
 
@@ -114,6 +182,11 @@ class KMeans(Strategy):
             self.cluster_centers_[i] = KMeans.mean(assigned)
 
     def calc_weights(self, data: List) -> List[float]:
+        """
+        Calculate weights of potential points for k-means++
+        :param data: potential points
+        :return: weights for points
+        """
         weights = []
         for item in data:
             distances_to_centers = map(lambda center: distance.euclidean(center, item), self.cluster_centers_)
