@@ -2,6 +2,8 @@
 import random
 from typing import List
 
+import math
+
 import distance
 
 
@@ -98,7 +100,10 @@ class KMeans(Strategy):
             self.n_clusters = len(data)
 
         if len(self.cluster_centers_) == 0:
-            self.cluster_centers_ = random.choices(data, k=self.n_clusters)
+            self.cluster_centers_.append(random.choice(data))
+            for _ in range(self.n_clusters - 1):
+                weights = self.calc_weights(data)
+                self.cluster_centers_.extend(random.choices(data, weights, k=1))
 
         labels = self.predict(data)
         for i in range(self.n_clusters):
@@ -107,6 +112,15 @@ class KMeans(Strategy):
                 continue
 
             self.cluster_centers_[i] = KMeans.mean(assigned)
+
+    def calc_weights(self, data: List) -> List[float]:
+        weights = []
+        for item in data:
+            distances_to_centers = map(lambda center: distance.euclidean(center, item), self.cluster_centers_)
+            min_distance = min(distances_to_centers)
+            weights.append(math.pow(min_distance, 2))
+
+        return weights
 
     @staticmethod
     def mean(assigned: List) -> List:
