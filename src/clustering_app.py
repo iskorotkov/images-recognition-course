@@ -16,12 +16,12 @@ head, x, labels = dataset.from_file('../data/iris.csv')
 
 def show_clusters(title: str, method, data, n_clusters: int = 3, n_iterations: int = 1) -> None:
     """
-    Show clusters on a graph
-    :param title: graph title
-    :param method: method for finding clusters
-    :param data: data to search clusters in
-    :param n_clusters: number of clusters
-    :param n_iterations: number of iterations of the specified method
+    Show clusters on a graph.
+    :param title: graph title.
+    :param method: method for finding clusters.
+    :param data: data to search clusters in.
+    :param n_clusters: number of clusters.
+    :param n_iterations: number of iterations of the specified method.
     """
 
     plt.title(title)

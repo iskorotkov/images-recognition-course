@@ -9,13 +9,13 @@ import distance
 
 class Strategy:
     """
-    Base class for all clustering strategies
+    Base class for all clustering strategies.
     """
 
     def __init__(self, n_clusters: int = 2) -> None:
         """
-        Strategy constructor
-        :param n_clusters: number of clusters in provided datasets
+        Strategy constructor.
+        :param n_clusters: number of clusters in provided datasets.
         """
         super().__init__()
         if n_clusters < 1:
@@ -27,16 +27,16 @@ class Strategy:
     @abc.abstractmethod
     def fit(self, data: List) -> None:
         """
-        Train strategy on a provided dataset
-        :param data: dataset to train on
+        Train strategy on a provided dataset.
+        :param data: dataset to train on.
         """
         raise NotImplementedError
 
     def predict(self, data: List) -> List[int]:
         """
-        Assign dataset items to closest clusters
-        :param data: items to assign to clusters
-        :return: labels (cluster indexes) for each dataset item
+        Assign dataset items to closest clusters.
+        :param data: items to assign to clusters.
+        :return: labels (cluster indexes) for each dataset item.
         """
         labels = []
         for item in data:
@@ -56,7 +56,7 @@ class Strategy:
 
 class Maximin(Strategy):
     """
-    Maximin clustering strategy
+    Maximin clustering strategy.
     """
 
     def __init__(self, n_clusters: int = 2) -> None:
@@ -102,23 +102,23 @@ class Maximin(Strategy):
 
     def should_stop(self, cur_distance: float) -> bool:
         """
-        Determine whether should stop finding clusters
-        :param cur_distance: last calculated maximin distance
-        :return: whether should stop clustering
+        Determine whether should stop finding clusters.
+        :param cur_distance: last calculated maximin distance.
+        :return: whether should stop clustering.
         """
         return cur_distance < self.mean_distance() or len(self.cluster_centers_) >= self.n_clusters
 
     def mean_distance(self) -> float:
         """
-        Mean of distances between found cluster centers
-        :return: distances mean
+        Mean of distances between found cluster centers.
+        :return: distances mean.
         """
         return self.distances_sum_ / len(self.cluster_centers_)
 
 
 class KMaximin(Strategy):
     """
-    K-Maximin clustering strategy
+    K-Maximin clustering strategy.
     """
 
     def __init__(self, n_clusters: int = 2) -> None:
@@ -148,7 +148,7 @@ class KMaximin(Strategy):
 
 class KMeans(Strategy):
     """
-    K-Means clustering strategy
+    K-Means clustering strategy.
     """
 
     def __init__(self, n_clusters: int = 2) -> None:
@@ -183,9 +183,9 @@ class KMeans(Strategy):
 
     def calc_weights(self, data: List) -> List[float]:
         """
-        Calculate weights of potential points for k-means++
-        :param data: potential points
-        :return: weights for points
+        Calculate weights of potential points for k-means++.
+        :param data: potential points.
+        :return: weights for points.
         """
         weights = []
         for item in data:
@@ -198,9 +198,9 @@ class KMeans(Strategy):
     @staticmethod
     def mean(assigned: List) -> List:
         """
-        Find mean point of the cluster
-        :param assigned: items assigned to the cluster
-        :return: cluster mean point
+        Find mean point of the cluster.
+        :param assigned: items assigned to the cluster.
+        :return: cluster mean point.
         """
         if len(assigned) == 0:
             raise ValueError("list must contain at least 1 element")

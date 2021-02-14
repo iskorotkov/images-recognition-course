@@ -5,7 +5,7 @@ import math
 
 def euclidean(a: List, b: List) -> float:
     """
-    Euclidean distance between two objects
+    Euclidean distance between two objects.
     """
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
@@ -15,7 +15,7 @@ def euclidean(a: List, b: List) -> float:
 
 def hamming(a: List, b: List) -> float:
     """
-    Hamming distance between two objects
+    Hamming distance between two objects.
     """
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
@@ -25,7 +25,7 @@ def hamming(a: List, b: List) -> float:
 
 def manhattan(a: List, b: List) -> float:
     """
-    Manhattan distance between two objects
+    Manhattan distance between two objects.
     """
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
@@ -35,7 +35,7 @@ def manhattan(a: List, b: List) -> float:
 
 def jaccard(a: List, b: List) -> float:
     """
-    Jaccard distance between two objects
+    Jaccard distance between two objects.
     """
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")
@@ -50,7 +50,7 @@ def jaccard(a: List, b: List) -> float:
 
 def cosine(a: List, b: List) -> float:
     """
-    Cosine distance between two objects
+    Cosine distance between two objects.
     """
     if len(a) != len(b):
         raise ValueError("len(a) != len(b)")

@@ -12,11 +12,11 @@ random.seed(0)
 
 def find_closest(item, data, method) -> Tuple[int, float]:
     """
-    Find closest object
-    :param item: object for which to find closest object
-    :param data: list of objects to search in
-    :param method: method to use for calculating distances
-    :return: closest point index and distance to the current object
+    Find closest object.
+    :param item: object for which to find closest object.
+    :param data: list of objects to search in.
+    :param method: method to use for calculating distances.
+    :return: closest point index and distance to the current object.
     """
 
     closest_index = -1
