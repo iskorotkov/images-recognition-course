@@ -4,7 +4,7 @@ import sklearn.cluster as sklearn
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
-from src import dataset, cluster
+from src import dataset, clustering
 
 # Parameters to tweak
 n_clusters = 3
@@ -52,19 +52,19 @@ plt.suptitle('clusters')
 
 # Add graphs for each method
 plt.subplot(2, 3, 1)
-show_clusters('custom maximin', cluster.Maximin, x, n_clusters)
+show_clusters('custom maximin', clustering.Maximin, x, n_clusters)
 
 plt.subplot(2, 3, 2)
-show_clusters('custom k-means', cluster.KMeans, x, n_clusters)
+show_clusters('custom k-means', clustering.KMeans, x, n_clusters)
 
 plt.subplot(2, 3, 3)
 show_clusters('sklearn k-means', sklearn.KMeans, x, n_clusters)
 
 plt.subplot(2, 3, 4)
-show_clusters('custom k-maximin', cluster.KMaximin, x, n_clusters)
+show_clusters('custom k-maximin', clustering.KMaximin, x, n_clusters)
 
 plt.subplot(2, 3, 5)
-show_clusters(f'custom k-means ({n_iterations} iterations)', cluster.KMeans, x, n_clusters, n_iterations)
+show_clusters(f'custom k-means ({n_iterations} iterations)', clustering.KMeans, x, n_clusters, n_iterations)
 
 plt.subplot(2, 3, 6)
 show_clusters(f'sklearn k-means ({n_iterations} iterations)', sklearn.KMeans, x, n_clusters, n_iterations)
