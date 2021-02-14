@@ -33,7 +33,8 @@ def find_closest(item, data, method) -> Tuple[int, float]:
 # Prepare dataset
 head, x, labels = dataset.from_file('../data/iris.csv')
 x, labels = dataset.shuffle(x, labels)
-(train_x, train_labels), (test_x, test_labels) = dataset.split(x, labels, ratio=0.9)
+train_x, test_x = dataset.split(x, ratio=0.9)
+train_labels, test_labels = dataset.split(labels, ratio=0.9)
 
 train_len = len(train_x)
 test_len = len(test_x)
