@@ -59,7 +59,7 @@ class KNN(Strategy):
 
             classes.append(nearest_class)
 
-        return classes
+        return np.array(classes)
 
 
 class SVM(Strategy):
