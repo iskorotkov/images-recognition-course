@@ -1,6 +1,7 @@
 import random
 from typing import List, Tuple
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,7 +17,7 @@ def from_file(path: str) -> Tuple[List, List, List]:
     x = data.iloc[:, :-1].values
     labels = data.iloc[:, -1]
 
-    return head, x, labels
+    return np.array(head, dtype=np.str), x, np.array(labels, dtype=np.str)
 
 
 def split(x: List, ratio: float = 0.9) -> Tuple[List, List]:
@@ -42,4 +43,4 @@ def shuffle(x: List, labels: List) -> Tuple[List, List]:
 
     indices = list(range(len(x)))
     random.shuffle(indices)
-    return [x[i] for i in indices], [labels[i] for i in indices]
+    return np.array([x[i] for i in indices], dtype=np.float), np.array([labels[i] for i in indices], dtype=np.str)
