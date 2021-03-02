@@ -29,7 +29,35 @@ def f1(actual: List, predicted: List) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-def root_mean_square_error(actual: List, predicted: List) -> float:
+def rocCurve(min_threshold: int, max_threshold: int, rounds: int, evaluate) -> Tuple[List[float], List[float]]:
+    """
+    Receiver operating characteristic.
+    :param min_threshold: Initial threshold value.
+    :param max_threshold: Final threshold value.
+    :param rounds: Number of iterations.
+    :param evaluate: Fit algorithm and predict labels with given threshold; must return tuple of predicted and actual values.
+    """
+    delta = max_threshold - min_threshold
+
+    x = [0]
+    y = [0]
+    for i in range(0, rounds+1):
+        predicted, actual = evaluate(min_threshold + delta * i / rounds)
+        matrix = confusionMatrix(actual, predicted)
+
+        tpr = matrix.tp / (matrix.tp + matrix.fn)
+        fpr = matrix.fp / (matrix.fp + matrix.tn)
+
+        # x.append(x[-1] + fpr)
+        # y.append(x[-1] + tpr)
+
+        x.append(fpr)
+        y.append(tpr)
+
+    return np.array(x) / x[-1], np.array(y) / y[-1]
+
+
+def mse(actual: List, predicted: List) -> float:
     """
     Root mean square error.
     """
