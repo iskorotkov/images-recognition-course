@@ -1,16 +1,23 @@
+import math
 from typing import List, Tuple
 
 import numpy as np
-import math
+
 import dataset
 
 
 class ConfusionMatrix:
-    def __init__(self, tp, tn, fp, fn) -> None:
+    def __init__(self, tp: int, tn: int, fp: int, fn: int) -> None:
         self.tp = tp
         self.tn = tn
         self.fp = fp
         self.fn = fn
+
+    def __repr__(self) -> str:
+        return '<ConfusionMatrix tp:%d tn:%d fp:%d fn:%d>' % (self.tp, self.tn, self.fp, self.fn)
+
+    def __str__(self) -> str:
+        return 'Confusion matrix: true positives = %d; true negatives = %d; false positives = %d; false negatives = %d' % (self.tp, self.tn, self.fp, self.fn)
 
 
 def precision_recall(actual: List, predicted: List) -> Tuple[float, float]:
@@ -62,8 +69,7 @@ def mse(actual: List, predicted: List) -> float:
     Root mean square error.
     """
     powers = [math.pow(x-y, 2) for x, y in zip(actual, predicted)]
-    s = sum(powers)
-    return math.sqrt(s)
+    return sum(powers) / len(powers)
 
 
 def crossValidation(x: List, labels: List, rounds: int, predict, measure) -> float:
@@ -78,7 +84,7 @@ def crossValidation(x: List, labels: List, rounds: int, predict, measure) -> flo
     x, labels = dataset.shuffle(x, labels)
 
     rounds = min(rounds, len(x))
-    length = len(x)/rounds
+    length = len(x)//rounds
 
     result = 0
 
@@ -89,8 +95,8 @@ def crossValidation(x: List, labels: List, rounds: int, predict, measure) -> flo
         x_test = x[start:end]
         labels_test = labels[start:end]
 
-        x_train = x[0:start] + x[end:]
-        labels_train = labels[0:start] + labels[end:]
+        x_train = np.concatenate((x[:start], x[end:]))
+        labels_train = np.concatenate((labels[:start], labels[end:]))
 
         predicted = predict((x_train, labels_train), x_test)
         result += measure(labels_test, predicted)
