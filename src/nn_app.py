@@ -1,14 +1,10 @@
 import random
 
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
 
 import dataset
 import prettytable
 import classification
-
-print('TF version', tf.version.VERSION)
 
 target = 'virginica'
 
@@ -16,7 +12,6 @@ target = 'virginica'
 seed = 5
 random.seed(seed)
 np.random.seed(seed)
-tf.random.set_seed(seed)
 
 # Prepare dataset
 head, x, labels = dataset.from_file('./data/iris.csv')
@@ -27,7 +22,7 @@ labels = np.array([1 if x == target else 0 for x in labels])
 x_train, x_test = dataset.split(x, ratio=0.9)
 y_train, y_test = dataset.split(labels, ratio=0.9)
 
-model = classification.NN()
+model = classification.NN(20)
 model.fit(x_train, y_train)
 
 table = prettytable.PrettyTable(

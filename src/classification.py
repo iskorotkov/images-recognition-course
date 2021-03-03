@@ -151,7 +151,8 @@ class SVM(Strategy):
 
 
 class NN(Strategy):
-    def __init__(self):
+    def __init__(self, epochs):
+        self.epochs = epochs
         self.model = keras.models.Sequential([
             keras.layers.Flatten(input_shape=(4,)),
             keras.layers.Dense(8, activation=keras.activations.relu),
@@ -162,7 +163,7 @@ class NN(Strategy):
                            metrics=['accuracy'])
 
     def fit(self, data: List, labels: List) -> None:
-        self.model.fit(data, labels, epochs=10, batch_size=1)
+        self.model.fit(data, labels, epochs=self.epochs, batch_size=1)
 
     def predict(self, data: List) -> List:
         return self.model.predict(data)[:, 0]
