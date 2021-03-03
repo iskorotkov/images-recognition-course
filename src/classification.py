@@ -2,8 +2,9 @@ import abc
 from typing import List
 
 import numpy as np
+from tensorflow import keras
 
-from src import distance
+import distance
 
 
 class Strategy:
@@ -51,7 +52,8 @@ class KNN(Strategy):
     def predict(self, data: List) -> List:
         classes = []
         for item in data:
-            nearest = sorted(self.train, key=lambda x: distance.euclidean(item, x[0]))
+            nearest = sorted(
+                self.train, key=lambda x: distance.euclidean(item, x[0]))
             k_nearest = nearest[:self.k]
 
             k_classes = list(map(lambda x: x[1], k_nearest))
@@ -111,7 +113,8 @@ class SVM(Strategy):
 
     def fit(self, x, y):
         self.x = x
-        self.y = np.array(list(map(lambda item: 1 if item == self.target_class else -1, y)), dtype=np.float)
+        self.y = np.array(list(map(lambda item: 1 if item ==
+                                   self.target_class else -1, y)), dtype=np.float)
         self.lambdas = np.zeros_like(self.y, dtype=float)
         self.k = self.kernel(self.x, self.x) * self.y[:, np.newaxis] * self.y
 
@@ -124,20 +127,42 @@ class SVM(Strategy):
                 index = np.random.randint(0, len(self.lambdas))
 
                 # Q matrix.
-                q = self.k[[[iteration, iteration], [index, index]], [[iteration, index], [iteration, index]]]
+                q = self.k[[[iteration, iteration], [index, index]],
+                           [[iteration, index], [iteration, index]]]
 
                 # lambda_m * lambda_l, transposed.
                 v0 = self.lambdas[[iteration, index]]
 
-                k0 = 1 - np.sum(self.lambdas * self.k[[iteration, index]], axis=1)
+                k0 = 1 - np.sum(self.lambdas *
+                                self.k[[iteration, index]], axis=1)
                 u = np.array([-self.y[index], self.y[iteration]])
                 t_max = np.dot(k0, u) / (np.dot(np.dot(q, u), u) + 1E-15)
-                self.lambdas[[iteration, index]] = v0 + u * self.restrict_to_square(t_max, v0, u)
+                self.lambdas[[iteration, index]] = v0 + \
+                    u * self.restrict_to_square(t_max, v0, u)
 
         sv_indices, = np.nonzero(self.lambdas > 1E-15)
         self.b = np.sum((1.0 - np.sum(self.k[sv_indices] * self.lambdas, axis=1)) * self.y[sv_indices]) / len(
             sv_indices)
 
     def predict(self, data: List) -> List:
-        values = np.sum(self.kernel(data, self.x) * self.y * self.lambdas, axis=1) + self.b
+        values = np.sum(self.kernel(data, self.x) * self.y *
+                        self.lambdas, axis=1) + self.b
         return (values > 0) * 2 - 1
+
+
+class NN(Strategy):
+    def __init__(self):
+        self.model = keras.models.Sequential([
+            keras.layers.Flatten(input_shape=(4,)),
+            keras.layers.Dense(8, activation=keras.activations.relu),
+            keras.layers.Dense(1, activation=keras.activations.sigmoid)
+        ])
+        self.model.compile(optimizer='adam',
+                           loss=keras.losses.BinaryCrossentropy(),
+                           metrics=['accuracy'])
+
+    def fit(self, data: List, labels: List) -> None:
+        self.model.fit(data, labels, epochs=10, batch_size=1)
+
+    def predict(self, data: List) -> List:
+        return self.model.predict(data)[:, 0]
