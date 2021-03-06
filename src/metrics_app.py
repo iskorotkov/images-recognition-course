@@ -6,17 +6,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import os
+import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tf.get_logger().setLevel('ERROR')
 
 seed = 5
-epochs = 10
+epochs = 1
 target = 'virginica'
 
 # Seed
 random.seed(seed)
 np.random.seed(seed)
+tf.random.set_seed(seed)
 
 # Prepare dataset
 head, x, labels = dataset.from_file('./data/iris.csv')
