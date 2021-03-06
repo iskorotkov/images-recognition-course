@@ -89,3 +89,6 @@ print('Dunn index =', dunnIndex)
 
 dbi = metrics.dbi(x, predicted_clusters, kmeans.cluster_centers_)
 print('Devies-Bouldin index =', dbi)
+
+dbcv = metrics.dbcv(x, predicted_clusters)
+print('Density-based clustering validation =', dbcv)

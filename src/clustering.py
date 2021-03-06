@@ -1,9 +1,9 @@
 ﻿import abc
 import random
 from typing import List
-
+import numpy
 import math
-
+import numpy as np
 import distance
 
 
@@ -41,7 +41,8 @@ class Strategy:
         labels = []
         for item in data:
             nearest_center_index = 0
-            min_distance = distance.euclidean(item, self.cluster_centers_[nearest_center_index])
+            min_distance = distance.euclidean(
+                item, self.cluster_centers_[nearest_center_index])
 
             for i, center in enumerate(self.cluster_centers_):
                 d = distance.euclidean(item, center)
@@ -51,7 +52,7 @@ class Strategy:
 
             labels.append(nearest_center_index)
 
-        return labels
+        return np.array(labels)
 
 
 class Maximin(Strategy):
@@ -171,7 +172,8 @@ class KMeans(Strategy):
             self.cluster_centers_.append(random.choice(data))
             for _ in range(self.n_clusters - 1):
                 weights = self.calc_weights(data)
-                self.cluster_centers_.extend(random.choices(data, weights, k=1))
+                self.cluster_centers_.extend(
+                    random.choices(data, weights, k=1))
 
         labels = self.predict(data)
         for i in range(self.n_clusters):
@@ -189,7 +191,8 @@ class KMeans(Strategy):
         """
         weights = []
         for item in data:
-            distances_to_centers = map(lambda center: distance.euclidean(center, item), self.cluster_centers_)
+            distances_to_centers = map(lambda center: distance.euclidean(
+                center, item), self.cluster_centers_)
             min_distance = min(distances_to_centers)
             weights.append(math.pow(min_distance, 2))
 
@@ -206,7 +209,8 @@ class KMeans(Strategy):
             raise ValueError("list must contain at least 1 element")
 
         fields = len(assigned[0])
-        fields_values = [[item[field_index] for item in assigned] for field_index in range(fields)]
+        fields_values = [[item[field_index] for item in assigned]
+                         for field_index in range(fields)]
         field_sums = [sum(field_values) for field_values in fields_values]
         center = [field_sum / len(assigned) for field_sum in field_sums]
         return center
