@@ -43,4 +43,4 @@ def shuffle(x: List, labels: List) -> Tuple[List, List]:
 
     indices = list(range(len(x)))
     random.shuffle(indices)
-    return np.array([x[i] for i in indices], dtype=np.float), np.array([labels[i] for i in indices], dtype=np.str)
+    return np.array([x[i] for i in indices]), np.array([labels[i] for i in indices])

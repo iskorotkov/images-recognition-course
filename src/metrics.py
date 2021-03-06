@@ -36,27 +36,25 @@ def f1(actual: List, predicted: List) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-def rocCurve(min_threshold: int, max_threshold: int, rounds: int, evaluate) -> Tuple[List[float], List[float]]:
+def rocCurve(rounds: int, predict, min_threshold: int = -0.5, max_threshold: int = 0.5) -> Tuple[List[float], List[float]]:
     """
     Receiver operating characteristic.
+    :param rounds: Number of iterations.
+    :param predict: Fit algorithm and predict labels with given threshold; must return tuple of predicted and actual values.
     :param min_threshold: Initial threshold value.
     :param max_threshold: Final threshold value.
-    :param rounds: Number of iterations.
-    :param evaluate: Fit algorithm and predict labels with given threshold; must return tuple of predicted and actual values.
     """
     delta = max_threshold - min_threshold
 
     x = [0]
     y = [0]
     for i in range(0, rounds+1):
-        predicted, actual = evaluate(min_threshold + delta * i / rounds)
-        matrix = confusionMatrix(actual, predicted)
+        predicted, actual = predict(min_threshold + delta * i / rounds)
+        predicted_labels = predicted > 0.5
+        matrix = confusionMatrix(actual, predicted_labels)
 
         tpr = matrix.tp / (matrix.tp + matrix.fn)
         fpr = matrix.fp / (matrix.fp + matrix.tn)
-
-        # x.append(x[-1] + fpr)
-        # y.append(x[-1] + tpr)
 
         x.append(fpr)
         y.append(tpr)
@@ -72,14 +70,13 @@ def mse(actual: List, predicted: List) -> float:
     return sum(powers) / len(powers)
 
 
-def crossValidation(x: List, labels: List, rounds: int, predict, measure) -> float:
+def crossValidation(x: List, labels: List, rounds: int, predict) -> float:
     """
     K-fold cross-validation.
     :param x: Dataset.
     :param labels: Data labels.
     :param rounds: Rounds of cross-validation.
     :params predict: Prediction algorithm.
-    :params measure: Measuring algorithm.
     """
     x, labels = dataset.shuffle(x, labels)
 
@@ -99,7 +96,7 @@ def crossValidation(x: List, labels: List, rounds: int, predict, measure) -> flo
         labels_train = np.concatenate((labels[:start], labels[end:]))
 
         predicted = predict((x_train, labels_train), x_test)
-        result += measure(labels_test, predicted)
+        result += sum(predicted == labels_test) / len(predicted)
 
     return result/rounds
 
