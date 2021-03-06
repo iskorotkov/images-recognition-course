@@ -83,3 +83,6 @@ predicted_clusters = kmeans.predict(x)
 
 silhouette = metrics.silhouetteCoef(x, predicted_clusters, kmeans.cluster_centers_)
 print('Silhouette (average) =', sum(silhouette) / len(silhouette))
+
+dunnIndex = metrics.dunnIndex(x, predicted_clusters, kmeans.cluster_centers_)
+print('Dunn index =', dunnIndex)

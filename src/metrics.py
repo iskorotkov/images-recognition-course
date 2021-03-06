@@ -164,8 +164,35 @@ def silhouetteCoef(data: List, clusters: List, centers: List) -> List[float]:
     return np.array(results)
 
 
-def dunnIndex():
-    pass
+def dunnIndex(data: List, clusters: List, centers: List) -> float:
+    def cluster_distance(ck_elems: List, cl_elems: List) -> float:
+        distances = [distance.euclidean(x, y)
+                     for x in ck_elems
+                     for y in cl_elems]
+        return min(distances)
+
+    def cluster_diameter(data: List) -> float:
+        distances = [distance.euclidean(data[i], data[j])
+                     for i in range(len(data))
+                     for j in range(i + 1, len(data))]
+        return max(distances)
+
+    min_distance = -1
+    max_diameter = -1
+    for ck in range(len(centers)):
+        ck_elems = data[[ck == cluster for cluster in clusters]]
+
+        diameter = cluster_diameter(ck_elems)
+        max_diameter = max(max_diameter, diameter)
+
+        for cl in range(ck + 1, len(centers)):
+            cl_elems = data[[cl == cluster for cluster in clusters]]
+
+            dist = cluster_distance(ck_elems, cl_elems)
+            if (min_distance < 0 or dist < min_distance):
+                min_distance = dist
+
+    return min_distance / max_diameter
 
 
 def dbi():
