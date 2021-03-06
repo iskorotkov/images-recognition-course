@@ -64,9 +64,8 @@ def roc_predict(threshold: float):
     return model.predict(x_test) + threshold, y_test
 
 
-fpr, tpr = metrics.rocCurve(20, roc_predict)
-print('fpr:', fpr, 'tpr:', tpr)
-
+fpr, tpr = metrics.rocCurve(100, roc_predict)
+plt.title('ROC curve')
 plt.plot(fpr, tpr)
 plt.plot([0, 1], [0, 1], 'r--')
 plt.show()
