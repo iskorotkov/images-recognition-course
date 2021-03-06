@@ -47,6 +47,9 @@ print('F1 score =', f1)
 matrix = metrics.confusionMatrix(y_test, predicted_labels)
 print(matrix)
 
+mse = metrics.mse(y_test, predicted)
+print('MSE =', mse)
+
 
 def cross_validation_predict(train, x_test):
     model = classification.NN(epochs)
