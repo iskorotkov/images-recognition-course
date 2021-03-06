@@ -163,7 +163,7 @@ class NN(Strategy):
                            metrics=['accuracy'])
 
     def fit(self, data: List, labels: List) -> None:
-        self.model.fit(data, labels, epochs=self.epochs, batch_size=1)
+        self.model.fit(data, labels, epochs=self.epochs, batch_size=1, verbose=0)
 
     def predict(self, data: List) -> List:
         return self.model.predict(data)[:, 0]
