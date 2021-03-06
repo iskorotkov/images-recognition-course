@@ -165,6 +165,12 @@ def silhouetteCoef(data: List, clusters: List, centers: List) -> List[float]:
 
 
 def dunnIndex(data: List, clusters: List, centers: List) -> float:
+    """
+    Dunn index.
+    :param data: List of points.
+    :param clusters: List of predicted clusters.
+    :param centers: List of cluster centers.
+    """
     def cluster_distance(ck_elems: List, cl_elems: List) -> float:
         distances = [distance.euclidean(x, y)
                      for x in ck_elems
