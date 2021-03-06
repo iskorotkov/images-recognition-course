@@ -64,7 +64,7 @@ def rocCurve(rounds: int, predict, min_threshold: int = -0.5, max_threshold: int
 
 def mse(actual: List, predicted: List) -> float:
     """
-    Root mean square error.
+    Mean square error.
     """
     powers = [math.pow(x-y, 2) for x, y in zip(actual, predicted)]
     return sum(powers) / len(powers)
