@@ -72,3 +72,6 @@ plt.title('ROC curve')
 plt.plot(fpr, tpr)
 plt.plot([0, 1], [0, 1], 'r--')
 plt.show()
+
+r2 = metrics.r_squared(y_test, predicted)
+print('Coefficient of determination (R squared) =', r2)

@@ -120,9 +120,14 @@ def confusionMatrix(actual: List, predicted: List) -> ConfusionMatrix:
     return m
 
 
-def r_squared():
-    # R-squared when no known split available
-    pass
+def r_squared(actual: List, predicted: List) -> float:
+    """
+    Coefficient of determination (R squared).
+    """
+    rss = sum([(y - yp) ** 2 for y, yp in zip(actual, predicted)])
+    y_mean = sum(actual) / len(actual)
+    tss = sum([(y - y_mean) ** 2 for y in actual])
+    return 1 - rss / tss
 
 
 def sillhoueteCoef():
