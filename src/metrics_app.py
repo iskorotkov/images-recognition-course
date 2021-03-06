@@ -12,7 +12,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tf.get_logger().setLevel('ERROR')
 
 seed = 5
-epochs = 1
+epochs = 2
 target = 'virginica'
 
 # Seed
@@ -58,8 +58,6 @@ def cross_validation_predict(train, x_test):
 
 cross_val = metrics.crossValidation(x, labels, 5, cross_validation_predict)
 print('Cross validation - correct labels in average =', cross_val)
-
-model.fit(x_train, y_train)
 
 
 def roc_predict(threshold: float):
