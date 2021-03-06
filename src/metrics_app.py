@@ -86,3 +86,6 @@ print('Silhouette (average) =', sum(silhouette) / len(silhouette))
 
 dunnIndex = metrics.dunnIndex(x, predicted_clusters, kmeans.cluster_centers_)
 print('Dunn index =', dunnIndex)
+
+dbi = metrics.dbi(x, predicted_clusters, kmeans.cluster_centers_)
+print('Devies-Bouldin index =', dbi)

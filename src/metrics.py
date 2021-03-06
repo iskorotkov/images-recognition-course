@@ -157,7 +157,7 @@ def silhouetteCoef(data: List, clusters: List, centers: List) -> List[float]:
         # Use (len - 1) because current element is in same_cluster_distances.
         a = sum(same_cluster_distances) / (len(same_cluster_distances) - 1)
         b = sum(closest_cluster_distances) / len(closest_cluster_distances)
-        silhouette = abs(b - a) / max(a, b)
+        silhouette = (b - a) / max(a, b)
 
         results.append(silhouette)
 
@@ -195,15 +195,45 @@ def dunnIndex(data: List, clusters: List, centers: List) -> float:
             cl_elems = data[[cl == cluster for cluster in clusters]]
 
             dist = cluster_distance(ck_elems, cl_elems)
-            if (min_distance < 0 or dist < min_distance):
+            if min_distance < 0 or dist < min_distance:
                 min_distance = dist
 
     return min_distance / max_diameter
 
 
-def dbi():
-    # Devis-Boldin index?
-    pass
+def dbi(data: List, clusters: List, centers: List) -> float:
+    """
+    Davies-Bouldin index.
+    :param data: List of points.
+    :param clusters: List of predicted clusters.
+    :param centers: List of cluster centers.
+    """
+    def s(elements: List, center) -> float:
+        s = sum([distance.euclidean(x, center) for x in elements])
+        length = math.sqrt(sum([x ** 2 for x in center]))
+        return s / length
+
+    result = 0
+    for ck in range(len(centers)):
+        max_value = -1
+        for cl in range(len(centers)):
+            if ck == cl:
+                continue
+
+            ck_center = centers[ck]
+            cl_center = centers[cl]
+            dist = distance.euclidean(ck_center, cl_center)
+
+            ck_elements = data[[ck == cluster for cluster in clusters]]
+            cl_elements = data[[cl == cluster for cluster in clusters]]
+
+            value = (s(ck_elements, ck_center) +
+                     s(cl_elements, cl_center)) / dist
+            max_value = max(max_value, value)
+
+        result += max_value
+
+    return result / len(data)
 
 
 def dbcv():
