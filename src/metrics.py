@@ -1,8 +1,7 @@
 import math
 from typing import List, Tuple
-
 import numpy as np
-
+import distance
 import dataset
 
 
@@ -130,8 +129,39 @@ def r_squared(actual: List, predicted: List) -> float:
     return 1 - rss / tss
 
 
-def sillhoueteCoef():
-    pass
+def silhouetteCoef(data: List, clusters: List, centers: List) -> List[float]:
+    """
+    Silhouette = `(b - a) / max(a, b)`,
+    where `a` - mean distance from the point to other points on the same cluster,
+    `b` - mean distance from the point to points from other closest cluster.
+    :param data: List of points.
+    :param clusters: List of predicted clusters.
+    :param centers: List of cluster centers.
+    """
+    results = []
+    for cur_elem, cur_cluster in zip(data, clusters):
+        indices = [cluster == cur_cluster for cluster in clusters]
+        same_cluster_elems = data[indices]
+
+        center = sorted(
+            centers, key=lambda center: distance.euclidean(cur_elem, center))[1]
+        center_index = centers.index(center)
+        indices = [cluster == center_index for cluster in clusters]
+        closest_cluster_elems = data[indices]
+
+        same_cluster_distances = [distance.euclidean(
+            cur_elem, other) for other in same_cluster_elems]
+        closest_cluster_distances = [distance.euclidean(
+            cur_elem, other) for other in closest_cluster_elems]
+
+        # Use (len - 1) because current element is in same_cluster_distances.
+        a = sum(same_cluster_distances) / (len(same_cluster_distances) - 1)
+        b = sum(closest_cluster_distances) / len(closest_cluster_distances)
+        silhouette = abs(b - a) / max(a, b)
+
+        results.append(silhouette)
+
+    return np.array(results)
 
 
 def dunnIndex():

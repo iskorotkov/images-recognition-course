@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import random
 import os
 import tensorflow as tf
+import clustering
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tf.get_logger().setLevel('ERROR')
@@ -75,3 +76,10 @@ plt.show()
 
 r2 = metrics.r_squared(y_test, predicted)
 print('Coefficient of determination (R squared) =', r2)
+
+kmeans = clustering.KMeans(3)
+kmeans.fit(x)
+predicted_clusters = kmeans.predict(x)
+
+silhouette = metrics.silhouetteCoef(x, predicted_clusters, kmeans.cluster_centers_)
+print('Silhouette (average) =', sum(silhouette) / len(silhouette))
