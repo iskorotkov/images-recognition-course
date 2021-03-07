@@ -1,12 +1,20 @@
 from operator import contains
 from typing import List, Dict, Tuple
-import cv2  # opencv-python
+import cv2
 import os
 import numpy as np
 
 
-def process(source: str, dimension: int) -> None:
-    pass
+def process(source: str, destination: str, dimensions: Tuple[int, int]) -> None:
+    images = load_images(source)
+    for imagesList in images.values():
+        for index, image in enumerate(imagesList):
+            image = crop(image)
+            image = resize(image, dimensions)
+            image = to_monochrome(image)
+            imagesList[index] = image
+
+    save_images(destination, images)
 
 
 def load_images(path: str) -> Dict[str, np.array]:
@@ -63,19 +71,3 @@ def crop(image: np.array) -> np.array:
         rows = int(columns / ratio)
 
     return image[y:y+rows, x:x+columns]
-
-
-images = load_images('./data/images')
-
-for imagesList in images.values():
-    for index, image in enumerate(imagesList):
-        image = crop(image)
-        image = resize(image, (32, 32))
-        image = to_monochrome(image)
-        imagesList[index] = image
-
-cv2.imshow('Sample image', images['B'][1])
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-save_images('./data/images-gen', images)
