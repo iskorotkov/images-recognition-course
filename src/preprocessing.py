@@ -1,11 +1,8 @@
-import multiprocessing
 from operator import contains
 from typing import List, Dict, Tuple
 import cv2  # opencv-python
-import skimage  # scikit-image
 import os
 import numpy as np
-from skimage import io, util
 
 
 def process(source: str, dimension: int) -> None:
@@ -51,19 +48,33 @@ def to_monochrome(image: np.array) -> np.array:
     return image
 
 
-def crop_fields(image: np.array) -> np.array:
-    pass
+def crop(image: np.array) -> np.array:
+    ratio = image.shape[1] / image.shape[0]  # columns / rows
+    monochrome = to_monochrome(image)
+
+    coords = cv2.findNonZero(monochrome)
+    x, y, columns, rows = cv2.boundingRect(coords)
+
+    if columns < rows * ratio:
+        x = max(x - int(rows * ratio - columns) // 2, 0)
+        columns = int(rows * ratio)
+    elif columns > rows * ratio:
+        y = max(y - int(columns - rows * ratio) // 2, 0)
+        rows = int(columns / ratio)
+
+    return image[y:y+rows, x:x+columns]
 
 
 images = load_images('./data/images')
 
 for imagesList in images.values():
     for index, image in enumerate(imagesList):
+        image = crop(image)
         image = resize(image, (32, 32))
         image = to_monochrome(image)
         imagesList[index] = image
 
-cv2.imshow('Sample image', images['0'][0])
+cv2.imshow('Sample image', images['B'][1])
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
