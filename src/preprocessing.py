@@ -2,6 +2,7 @@ from operator import contains
 from typing import List, Dict, Tuple
 import cv2
 import os
+import shutil
 import numpy as np
 
 
@@ -28,10 +29,15 @@ def load_images(path: str) -> Dict[str, np.array]:
 
             classPath = os.path.join(guidPath, className)
             for file in os.listdir(classPath):
-                filepath = os.path.join(classPath, file)
-                image = cv2.imread(filepath, cv2.IMREAD_UNCHANGED)
+                originalFile = os.path.join(classPath, file)
+                tempFile = os.path.join(classPath, '.tmp')
+
+                shutil.copy2(originalFile, tempFile)
+                image = cv2.imread(tempFile, cv2.IMREAD_UNCHANGED)
+                os.remove(tempFile)
+
                 if image is None:
-                    raise Exception(f'Couldn\'t read image at {filepath}')
+                    raise Exception(f'Couldn\'t read image at {originalFile}')
 
                 images[className].append(image)
 
