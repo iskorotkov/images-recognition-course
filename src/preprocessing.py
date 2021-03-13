@@ -9,6 +9,7 @@ def process(source: str, destination: str, dimensions: Tuple[int, int]) -> None:
     images = load_images(source)
     for imagesList in images.values():
         for index, image in enumerate(imagesList):
+            image = to_bgr(image)
             image = crop(image)
             image = resize(image, dimensions)
             image = to_monochrome(image)
@@ -28,7 +29,10 @@ def load_images(path: str) -> Dict[str, np.array]:
             classPath = os.path.join(guidPath, className)
             for file in os.listdir(classPath):
                 filepath = os.path.join(classPath, file)
-                image = cv2.imread(filepath)
+                image = cv2.imread(filepath, cv2.IMREAD_UNCHANGED)
+                if image is None:
+                    raise Exception(f'Couldn\'t read image at {filepath}')
+
                 images[className].append(image)
 
     return images
@@ -46,6 +50,17 @@ def save_images(path: str, images: Dict[str, np.array]) -> None:
 
 def resize(image: np.array, dim: Tuple[int, int]) -> np.array:
     return cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+
+
+def to_bgr(image: np.array) -> np.array:
+    image = np.copy(image)
+    if image.shape[2] == 4 and np.max(image[:, :, 3]) - np.min(image[:, :, 3]) >= 128:
+        alpha = image[:, :, 3]
+        image[:, :, 0] = alpha
+        image[:, :, 1] = alpha
+        image[:, :, 2] = alpha
+
+    return image
 
 
 def to_monochrome(image: np.array) -> np.array:
