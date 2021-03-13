@@ -51,8 +51,16 @@ def resize(image: np.array, dim: Tuple[int, int]) -> np.array:
 def to_monochrome(image: np.array) -> np.array:
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 0, 255, cv2.THRESH_OTSU)
-    if np.average(image) > 127:
+
+    edges_avg = (np.average(image[0, :]) +
+                 np.average(image[-1, :]) +
+                 np.average(image[:, 0]) +
+                 np.average(image[:, -1])) / 4
+    image_avg = (image.max() - image.min()) / 2
+
+    if edges_avg > image_avg:
         image = 255 - image
+
     return image
 
 
