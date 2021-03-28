@@ -10,10 +10,10 @@ images = preprocessing.load_images('./data/images-gen', nesting=2)
 ling = linguistic.Linguistic()
 ling.fit(images)
 
-content = ling.save_model('1.txt')
+ling.save_model('./models/linguistic.json')
 
 ling = linguistic.Linguistic()
-ling.load_model('1.txt')
+ling.load_model('./models/linguistic.json')
 
 actual = []
 unlabelled = []
@@ -27,3 +27,10 @@ table = prettytable.PrettyTable()
 table.add_column("Actual", actual)
 table.add_column("Predicted", predicted)
 print(table)
+
+correctness = [x == y for x, y in zip(actual, predicted)]
+
+total = len(actual)
+correct = correctness.count(True)
+
+print(f'Recognizing {total} images: {correct} were recognized correctly ({correct / total * 100}%)')
