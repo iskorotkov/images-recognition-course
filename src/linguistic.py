@@ -89,36 +89,35 @@ class Linguistic:
 
 
     def _signature(self, img: np.ndarray) -> Signature:
-        start, ok = self._start(img)
-        if not ok:
-            return Signature()
-
         img = img.copy()
-
-        paths = [start]
         sign = Signature()
 
-        while len(paths) > 0:
-            row, col = paths.pop(0)
-            if img[row, col] == 0:
-                continue
+        while img.any():
+            start, ok = self._start(img)
+            if not ok:
+                break
 
-            directions = [(row, col)]
-            group = Group()
+            paths = [start]
+            while len(paths) > 0:
+                row, col = paths.pop(0)
+                if img[row, col] == 0:
+                    continue
 
-            while len(directions) > 0:
-                row, col = directions.pop(0)
-                img[row, col] = 0
+                directions = [(row, col)]
+                group = Group()
 
-                code, directions, ok = self._directions(img, row, col)
-                if not ok:
-                    break
+                while len(directions) > 0:
+                    row, col = directions.pop(0)
+                    img[row, col] = 0
 
-                paths.extend(directions[1:])
-                group.add(code)
+                    code, directions, ok = self._directions(img, row, col)
+                    if not ok:
+                        break
 
-            sign.add(group)
+                    paths.extend(directions[1:])
+                    group.add(code)
 
+                sign.add(group)
 
         return sign
 
