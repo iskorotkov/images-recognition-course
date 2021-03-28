@@ -45,8 +45,8 @@ class Linguistic:
         pass
 
     def _start(self, img: np.ndarray) -> Tuple[int, int, bool]:
-        for row in range(img.shape[0] - 1, -1, -1):
-            for col in range(img.shape[1]):
+        for col in range(img.shape[1]):
+            for row in range(img.shape[0] - 1, -1, -1):
                 if img[row, col] > 0:
                     return (row, col), True
         return (0, 0), False
