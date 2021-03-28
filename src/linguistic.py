@@ -1,8 +1,12 @@
+from copy import Error
 from typing import Dict, List, Tuple, Union
 import numpy as np
+import json
+
 
 class Signature:
     pass
+
 
 class Signature:
     def __init__(self, code: int = None) -> None:
@@ -24,27 +28,53 @@ class Signature:
 
         return f'{self._code}{s}' if self._code else f'{s}'
 
+
 class Linguistic:
-    model: Dict[str, Signature]
+    _model: Dict[str, Signature]
 
     def __init__(self) -> None:
-        self.model = {}
+        self._model: Dict[str, List[str]] = {}
 
     def fit(self, data: Dict[str, List[np.ndarray]]):
         for label, images in data.items():
+            self._model[label] = []
+
             for image in images:
                 signature = self._signature(image)
                 normalized = self._normalize(str(signature))
-                print(signature, normalized)
+                self._model[label].append(normalized)
 
-    def predict(self, data: List[np.ndarray]):
-        pass
+    def predict(self, data: List[np.ndarray]) -> List[str]:
+        if len(self._model) == 0:
+            raise Error('Model is empty; train or load it from file')
 
-    def save_model(self, path: str):
-        pass
+        labels = []
+        for item in data:
+            label = self._predict_item(item)
+            labels.append(label)
 
-    def load_model(self, path: str):
-        pass
+        return labels
+
+    def save_model(self, path: str) -> None:
+        s = json.dumps(self._model, indent=2)
+        with open(path, "w") as f:
+            f.write(s)
+
+    def load_model(self, path: str) -> None:
+        with open(path) as f:
+            s = f.read()
+            self._model = json.loads(s)
+
+    def _predict_item(self, item: np.ndarray) -> str:
+        signature = self._signature(item)
+        normalized = self._normalize(str(signature))
+
+        for label, images in self._model.items():
+            for image in images:
+                if normalized == image:
+                    return label
+
+        return ''
 
     def _start(self, img: np.ndarray) -> Tuple[int, int, bool]:
         for col in range(img.shape[1]):
@@ -52,7 +82,6 @@ class Linguistic:
                 if img[row, col] > 0:
                     return (row, col), True
         return (0, 0), False
-
 
     def _directions(self, img: np.ndarray, row: int, col: int) -> Tuple[int, List[Tuple[int, int]]]:
         # 8 1 2
@@ -89,7 +118,6 @@ class Linguistic:
 
         return direction_code, directions
 
-
     def _signature(self, img: np.ndarray) -> Signature:
         img = img.copy()
         sign = Signature()
@@ -119,7 +147,6 @@ class Linguistic:
                 sign.add(alt_sign)
 
         return sign
-
 
     def _normalize(self, signature: str) -> List[int]:
         patterns = {
