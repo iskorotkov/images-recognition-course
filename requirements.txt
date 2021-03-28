@@ -1,0 +1,8 @@
+numpy
+prettytable
+opencv-python
+scipy
+pandas
+sklearn
+matplotlib
+tf-nightly
