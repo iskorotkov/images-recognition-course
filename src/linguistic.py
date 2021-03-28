@@ -30,8 +30,6 @@ class Signature:
 
 
 class Linguistic:
-    _model: Dict[str, Signature]
-
     def __init__(self) -> None:
         self._model: Dict[str, List[str]] = {}
 
