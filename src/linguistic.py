@@ -33,8 +33,9 @@ class Linguistic:
     def fit(self, data: Dict[str, List[np.ndarray]]):
         for label, images in data.items():
             for image in images:
-                sign = self._signature(image)
-                print(sign)
+                signature = self._signature(image)
+                normalized = self._normalize(str(signature))
+                print(signature, normalized)
 
     def predict(self, data: List[np.ndarray]):
         pass
@@ -120,5 +121,28 @@ class Linguistic:
         return sign
 
 
-    def _normalize(img: List[int]) -> List[int]:
-        pass
+    def _normalize(self, signature: str) -> List[int]:
+        patterns = {
+            '(0)': '',
+            '0': '',
+        }
+
+        for i in range(1, 9):
+            key = str(i) + str(i)
+            patterns[key] = str(i)
+
+        for i in range(2, 9, 2):
+            for offset in [-1, 1]:
+                key = str(i + offset) + str(i) + str(i + offset)
+                patterns[key] = str(i)
+
+                key = str(i) + str(i + offset) + str(i)
+                patterns[key] = str(i)
+
+        previous = ''
+        while previous != signature:
+            previous = signature
+            for old, new in patterns.items():
+                signature = signature.replace(old, new)
+
+        return signature
