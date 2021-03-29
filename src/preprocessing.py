@@ -23,36 +23,16 @@ def process(images: Dict[str, List[np.ndarray]], dimensions: Tuple[int, int]) ->
     return processed
 
 
-def load_images(path: str, nesting=3) -> Dict[str, List[np.ndarray]]:
+def load_images(path: str) -> Dict[str, List[np.ndarray]]:
     images = {}
 
-    if nesting == 3:
-        for guid in os.listdir(path):
-            guidPath = os.path.join(path, guid)
-            for className in os.listdir(os.path.join(guidPath)):
-                if not contains(images, className):
-                    images[className] = []
-
-                classPath = os.path.join(guidPath, className)
-                for file in os.listdir(classPath):
-                    originalFile = os.path.join(classPath, file)
-                    tempFile = os.path.join(classPath, '.tmp')
-
-                    shutil.copy2(originalFile, tempFile)
-                    image = cv2.imread(tempFile, cv2.IMREAD_UNCHANGED)
-                    os.remove(tempFile)
-
-                    if image is None:
-                        raise Exception(
-                            f'Couldn\'t read image at {originalFile}')
-
-                    images[className].append(image)
-    elif nesting == 2:
-        for className in os.listdir(os.path.join(path)):
+    for guid in os.listdir(path):
+        guidPath = os.path.join(path, guid)
+        for className in os.listdir(os.path.join(guidPath)):
             if not contains(images, className):
                 images[className] = []
 
-            classPath = os.path.join(path, className)
+            classPath = os.path.join(guidPath, className)
             for file in os.listdir(classPath):
                 originalFile = os.path.join(classPath, file)
                 tempFile = os.path.join(classPath, '.tmp')
@@ -62,12 +42,34 @@ def load_images(path: str, nesting=3) -> Dict[str, List[np.ndarray]]:
                 os.remove(tempFile)
 
                 if image is None:
-                    raise Exception(f'Couldn\'t read image at {originalFile}')
+                    raise Exception(
+                        f'Couldn\'t read image at {originalFile}')
 
                 images[className].append(image)
-    else:
-        raise Error(
-            'Unsupported nesting level; only 2 and 3 levels are supported')
+
+    return images
+
+
+def load_merged_images(path: str) -> Dict[str, List[np.ndarray]]:
+    images = {}
+
+    for className in os.listdir(os.path.join(path)):
+        if not contains(images, className):
+            images[className] = []
+
+        classPath = os.path.join(path, className)
+        for file in os.listdir(classPath):
+            originalFile = os.path.join(classPath, file)
+            tempFile = os.path.join(classPath, '.tmp')
+
+            shutil.copy2(originalFile, tempFile)
+            image = cv2.imread(tempFile, cv2.IMREAD_UNCHANGED)
+            os.remove(tempFile)
+
+            if image is None:
+                raise Exception(f'Couldn\'t read image at {originalFile}')
+
+            images[className].append(image)
 
     return images
 
@@ -128,3 +130,24 @@ def crop(image: np.ndarray) -> np.ndarray:
         rows = int(columns / ratio)
 
     return image[y:y+rows, x:x+columns]
+
+
+def split(images: Dict[str, List[np.ndarray]], ratio: float) -> Tuple[Dict[str, List[np.ndarray]], Dict[str, List[np.ndarray]]]:
+    if ratio < 0 or ratio > 1:
+        raise Error('Incorrect ratio: ratio must be in range [0, 1]')
+
+    if ratio == 0:
+        return {}, images
+
+    if ratio == 1:
+        return images, {}
+
+    train = {}
+    test = {}
+
+    for label, imagesList in images.items():
+        edge = int(len(imagesList) * ratio)
+        train[label] = imagesList[:edge]
+        test[label] = imagesList[edge:]
+
+    return train, test
