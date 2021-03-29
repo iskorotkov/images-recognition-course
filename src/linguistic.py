@@ -1,4 +1,5 @@
 from copy import Error
+import re
 from typing import Dict, List, Tuple, Union
 import numpy as np
 import json
@@ -40,7 +41,7 @@ class Linguistic:
 
             for image in images:
                 signature = self._signature(image)
-                normalized = self._normalize(str(signature))
+                normalized = self._normalize(signature)
                 self._model[label].append(normalized)
 
     def predict(self, data: List[np.ndarray]) -> List[str]:
@@ -66,7 +67,7 @@ class Linguistic:
 
     def _predict_item(self, item: np.ndarray) -> str:
         signature = self._signature(item)
-        normalized = self._normalize(str(signature))
+        normalized = self._normalize(signature)
 
         for label, images in self._model.items():
             for image in images:
@@ -147,7 +148,9 @@ class Linguistic:
 
         return sign
 
-    def _normalize(self, signature: str) -> List[int]:
+    def _normalize(self, signature: Signature) -> List[int]:
+        signature = str(signature)
+
         patterns = {
             '(0)': '',
             '0': '',
@@ -165,10 +168,17 @@ class Linguistic:
                 key = str(i) + str(i + offset) + str(i)
                 patterns[key] = str(i)
 
+        r = '(.*)\(([0-9]+)\(([0-9]+)\)\)(.*)'
+
         previous = ''
         while previous != signature:
             previous = signature
+
             for old, new in patterns.items():
                 signature = signature.replace(old, new)
+
+            match = re.match(r, signature)
+            if match:
+                signature = f'{match.group(1)}({match.group(2)}{match.group(3)}){match.group(4)}'
 
         return signature
