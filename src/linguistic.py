@@ -22,7 +22,8 @@ class Signature:
             s = ''.join(map(str, s))
         elif len(self._children) == 1:
             child = self._children[0]
-            s = f'({child})' if not self._code else str(child) if child._code else ''
+            s = f'({child})' if not self._code else str(
+                child) if child._code else ''
         else:
             s = str(self._code)
 

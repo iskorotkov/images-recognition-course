@@ -70,8 +70,10 @@ class Potentials:
         return results
 
     def _cell_value(self, img: np.ndarray, row: int, col: int) -> int:
-        adjacent = self._safe(img, row, col-1) + self._safe(img, row, col+1) + self._safe(img, row-1, col) + self._safe(img, row+1, col)
-        diagonal = self._safe(img, row-1, col-1) + self._safe(img, row-1, col+1) + self._safe(img, row+1, col-1) + self._safe(img, row+1, col+1)
+        adjacent = self._safe(img, row, col-1) + self._safe(img, row, col+1) + \
+            self._safe(img, row-1, col) + self._safe(img, row+1, col)
+        diagonal = self._safe(img, row-1, col-1) + self._safe(img, row-1, col+1) + \
+            self._safe(img, row+1, col-1) + self._safe(img, row+1, col+1)
         return self._safe(img, row, col) + self._adjacent_weight * adjacent + self._diagonal_weight * diagonal
 
     def _safe(self, img: np.ndarray, row: int, col: int) -> int:
