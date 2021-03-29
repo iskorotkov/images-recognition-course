@@ -3,6 +3,7 @@ import re
 from typing import Dict, List, Tuple, Union
 import numpy as np
 import json
+import jellyfish
 
 
 class Signature:
@@ -69,12 +70,19 @@ class Linguistic:
         signature = self._signature(item)
         normalized = self._normalize(signature)
 
+        min_distance = -1
+        matched_label = ''
+
         for label, images in self._model.items():
             for image in images:
-                if normalized == image:
-                    return label
+                distance = jellyfish.damerau_levenshtein_distance(
+                    image, normalized)
 
-        return ''
+                if min_distance < 0 or distance < min_distance:
+                    min_distance = distance
+                    matched_label = label
+
+        return matched_label
 
     def _start(self, img: np.ndarray) -> Tuple[int, int, bool]:
         for col in range(img.shape[1]):

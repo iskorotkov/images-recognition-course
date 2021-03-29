@@ -6,3 +6,4 @@ pandas
 sklearn
 matplotlib
 tf-nightly
+jellyfish
