@@ -1,36 +1,64 @@
+from shutil import Error
 import potentials
-import numpy as np
 import preprocessing
 import prettytable
 
-preprocessing.process('./data/images', './data/images-gen', (8, 8))
 
-images = preprocessing.load_images('./data/images-gen', nesting=2)
+data_folder = './data/images'
+train_folder = './data/train'
+test_folder = './data/test'
+model_folder = './models/potentials.json'
 
-pot = potentials.Potentials()
-pot.fit(images)
+dimensions = (8, 8)
 
-pot.save_model('./models/potentials.json')
 
-pot = potentials.Potentials()
-pot.load_model('./models/potentials.json')
+def prepare():
+    images = preprocessing.load_images(data_folder)
+    train, test = preprocessing.split(images, 0.8)
+    train = preprocessing.process(train, dimensions)
 
-actual = []
-unlabelled = []
-for label, images in images.items():
-    actual.extend([label for _ in images])
-    unlabelled.extend(images)
+    preprocessing.save_images(train_folder, train)
+    preprocessing.save_images(test_folder, test)
 
-predicted = pot.predict(unlabelled)
 
-table = prettytable.PrettyTable()
-table.add_column("Actual", actual)
-table.add_column("Predicted", predicted)
-print(table)
+def train():
+    pot = potentials.Potentials()
 
-correctness = [x == y for x, y in zip(actual, predicted)]
+    images = preprocessing.load_merged_images(train_folder)
+    pot.fit(images)
 
-total = len(actual)
-correct = correctness.count(True)
+    pot.save_model(model_folder)
 
-print(f'Recognizing {total} images: {correct} were recognized correctly ({correct / total * 100}%)')
+
+def test():
+    pot = potentials.Potentials()
+    pot.load_model(model_folder)
+
+    images = preprocessing.load_merged_images(test_folder)
+    images = preprocessing.process(images, dimensions)
+
+    actual = []
+    unlabelled = []
+    for label, images in images.items():
+        actual.extend([label for _ in images])
+        unlabelled.extend(images)
+
+    predicted = pot.predict(unlabelled)
+
+    table = prettytable.PrettyTable()
+    table.add_column("Actual", actual)
+    table.add_column("Predicted", predicted)
+    print(table)
+
+    correctness = [x == y for x, y in zip(actual, predicted)]
+
+    total = len(actual)
+    correct = correctness.count(True)
+
+    print(
+        f'Recognizing {total} images: {correct} were recognized correctly ({correct / total * 100}%)')
+
+
+prepare()
+train()
+test()
