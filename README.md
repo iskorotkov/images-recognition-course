@@ -6,7 +6,12 @@ List of implemented algorithms:
   - maximin
   - k-maximin
   - k-means
-
 - classification:
   - kNN
   - SVM
+  - neural network
+- image preprocessing
+- metrics
+- image recognition:
+  - linguistic method
+  - potentials method
