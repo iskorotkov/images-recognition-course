@@ -6,5 +6,6 @@ __pycache__
 # data/*-gen
 data/images*
 data/test
+data/val
 data/train
 models/**

@@ -3,25 +3,36 @@ from typing import List, Dict, Tuple
 from shutil import Error
 import cv2
 import os
-import shutil
 import numpy as np
 
 
-def process(images: Dict[str, List[np.ndarray]], dimensions: Tuple[int, int]) -> Dict[str, List[np.ndarray]]:
+def process_image(image: np.ndarray, dimensions: Tuple[int, int]) -> np.ndarray:
+    image = to_bgr(image)
+    image = highlight_foreground(image)
+    image = crop(image)
+    image = resize(image, dimensions)
+    image = to_monochrome(image)
+    return image
+
+
+def process_dataset(images: Dict[str, List[np.ndarray]], dimensions: Tuple[int, int]) -> Dict[str, List[np.ndarray]]:
     processed = {}
     for label, imagesList in images.items():
         processed[label] = []
 
         for image in imagesList:
-            image = to_bgr(image)
-            image = highlight_foreground(image)
-            image = crop(image)
-            image = resize(image, dimensions)
-            image = to_monochrome(image)
-
+            image = process_image(image, dimensions)
             processed[label].append(image)
 
     return processed
+
+def load_image(path: str) -> np.ndarray:
+    image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+
+    if image is None:
+        raise Exception(f'Couldn\'t read image at {path}')
+
+    return image
 
 
 def load_images(path: str) -> Dict[str, List[np.ndarray]]:
@@ -35,17 +46,8 @@ def load_images(path: str) -> Dict[str, List[np.ndarray]]:
 
             classPath = os.path.join(guidPath, className)
             for file in os.listdir(classPath):
-                originalFile = os.path.join(classPath, file)
-                tempFile = os.path.join(classPath, '.tmp')
-
-                shutil.copy2(originalFile, tempFile)
-                image = cv2.imread(tempFile, cv2.IMREAD_UNCHANGED)
-                os.remove(tempFile)
-
-                if image is None:
-                    raise Exception(
-                        f'Couldn\'t read image at {originalFile}')
-
+                filepath = os.path.join(classPath, file)
+                image = load_image(filepath)
                 images[className].append(image)
 
     return images
@@ -60,16 +62,8 @@ def load_merged_images(path: str) -> Dict[str, List[np.ndarray]]:
 
         classPath = os.path.join(path, className)
         for file in os.listdir(classPath):
-            originalFile = os.path.join(classPath, file)
-            tempFile = os.path.join(classPath, '.tmp')
-
-            shutil.copy2(originalFile, tempFile)
-            image = cv2.imread(tempFile, cv2.IMREAD_UNCHANGED)
-            os.remove(tempFile)
-
-            if image is None:
-                raise Exception(f'Couldn\'t read image at {originalFile}')
-
+            filepath = os.path.join(classPath, file)
+            image = load_image(filepath)
             images[className].append(image)
 
     return images

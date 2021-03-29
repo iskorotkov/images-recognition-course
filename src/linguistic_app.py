@@ -7,7 +7,7 @@ import prettytable
 
 data_folder = './data/images'
 train_folder = './data/train'
-test_folder = './data/test'
+test_folder = './data/val'
 model_folder = './models/linguistic.json'
 
 dimensions = (8, 8)
@@ -16,7 +16,7 @@ dimensions = (8, 8)
 def prepare():
     images = preprocessing.load_images(data_folder)
     train, test = preprocessing.split(images, 0.8)
-    train = preprocessing.process(train, dimensions)
+    train = preprocessing.process_dataset(train, dimensions)
 
     preprocessing.save_images(train_folder, train)
     preprocessing.save_images(test_folder, test)
@@ -36,7 +36,7 @@ def test():
     ling.load_model(model_folder)
 
     images = preprocessing.load_merged_images(test_folder)
-    images = preprocessing.process(images, dimensions)
+    images = preprocessing.process_dataset(images, dimensions)
 
     actual = []
     unlabelled = []
