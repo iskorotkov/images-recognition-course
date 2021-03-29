@@ -14,6 +14,7 @@ def process(images: Dict[str, List[np.ndarray]], dimensions: Tuple[int, int]) ->
 
         for image in imagesList:
             image = to_bgr(image)
+            image = highlight_foreground(image)
             image = crop(image)
             image = resize(image, dimensions)
             image = to_monochrome(image)
@@ -103,11 +104,17 @@ def to_monochrome(image: np.ndarray) -> np.ndarray:
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 0, 255, cv2.THRESH_OTSU)
 
-    edges_avg = (np.average(image[0, :]) +
-                 np.average(image[-1, :]) +
-                 np.average(image[:, 0]) +
-                 np.average(image[:, -1])) / 4
-    image_avg = (image.max() - image.min()) / 2
+    return image
+
+
+def highlight_foreground(image: np.ndarray) -> np.ndarray:
+    monochrome = to_monochrome(image)
+
+    edges_avg = (np.average(monochrome[0, :]) +
+                 np.average(monochrome[-1, :]) +
+                 np.average(monochrome[:, 0]) +
+                 np.average(monochrome[:, -1])) / 4
+    image_avg = (monochrome.max() - monochrome.min()) / 2
 
     if edges_avg > image_avg:
         image = 255 - image
