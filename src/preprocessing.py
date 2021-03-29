@@ -7,17 +7,20 @@ import shutil
 import numpy as np
 
 
-def process(source: str, destination: str, dimensions: Tuple[int, int]) -> None:
-    images = load_images(source)
-    for imagesList in images.values():
-        for index, image in enumerate(imagesList):
+def process(images: Dict[str, List[np.ndarray]], dimensions: Tuple[int, int]) -> Dict[str, List[np.ndarray]]:
+    processed = {}
+    for label, imagesList in images.items():
+        processed[label] = []
+
+        for image in imagesList:
             image = to_bgr(image)
             image = crop(image)
             image = resize(image, dimensions)
             image = to_monochrome(image)
-            imagesList[index] = image
 
-    save_images(destination, images)
+            processed[label].append(image)
+
+    return processed
 
 
 def load_images(path: str, nesting=3) -> Dict[str, List[np.ndarray]]:
@@ -40,7 +43,8 @@ def load_images(path: str, nesting=3) -> Dict[str, List[np.ndarray]]:
                     os.remove(tempFile)
 
                     if image is None:
-                        raise Exception(f'Couldn\'t read image at {originalFile}')
+                        raise Exception(
+                            f'Couldn\'t read image at {originalFile}')
 
                     images[className].append(image)
     elif nesting == 2:
@@ -62,7 +66,8 @@ def load_images(path: str, nesting=3) -> Dict[str, List[np.ndarray]]:
 
                 images[className].append(image)
     else:
-        raise Error('Unsupported nesting level; only 2 and 3 levels are supported')
+        raise Error(
+            'Unsupported nesting level; only 2 and 3 levels are supported')
 
     return images
 
