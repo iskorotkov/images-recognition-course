@@ -48,8 +48,8 @@ while True:
     ling_label = ling.predict([image])[0]
     pot_label = pot.predict([image])[0]
 
-    plt.figure(0)
-    plt.suptitle('Image')
+    plt.figure('Image')
+    plt.title(filepath)
     plt.text(0, 0, f'Linguistic method: {ling_label}', bbox=dict(
         facecolor='white', alpha=0.8))
     plt.text(0, 1, f'Potentials method: {pot_label}', bbox=dict(
