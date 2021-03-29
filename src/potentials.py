@@ -56,7 +56,7 @@ class Potentials:
         return matched_label
 
     def _distance(self, x: List[int], y: List[int]) -> float:
-        return abs(sum([x - y for x, y in zip(x, y)]))
+        return sum([abs(x - y) for x, y in zip(x, y)])
 
     def _potential(self, img: np.ndarray) -> List[int]:
         img = img.astype('int32')
