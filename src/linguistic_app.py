@@ -1,6 +1,5 @@
 from shutil import Error
 import linguistic
-import potentials
 import preprocessing
 import prettytable
 
