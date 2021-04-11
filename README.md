@@ -9,9 +9,10 @@ List of implemented algorithms:
 - classification:
   - kNN
   - SVM
-  - neural network
+  - neural network (TF2)
 - image preprocessing
 - metrics
 - image recognition:
   - linguistic method
   - potentials method
+  - neural network (TF2)
