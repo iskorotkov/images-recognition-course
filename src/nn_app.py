@@ -1,35 +1,94 @@
-import random
-
+from typing import List
+import preprocessing
+import prettytable
+import nn
 import numpy as np
 
-import dataset
-import prettytable
-import classification
 
-target = 'virginica'
+data_folder = './data/images'
+train_folder = './data/train'
+test_folder = './data/val'
+model_save_location = './models/nn'
 
-# Seed
-seed = 5
-random.seed(seed)
-np.random.seed(seed)
+dimensions = (64, 64)
+shape = (dimensions[0], dimensions[1], 1)
 
-# Prepare dataset
-head, x, labels = dataset.from_file('./data/iris.csv')
-x, labels = dataset.shuffle(x, labels)
+n_classes = 36
+epochs = 20
+batch_size = 8
 
-labels = np.array([1 if x == target else 0 for x in labels])
+mapping = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-x_train, x_test = dataset.split(x, ratio=0.9)
-y_train, y_test = dataset.split(labels, ratio=0.9)
 
-model = classification.NN(20)
-model.fit(x_train, y_train)
+def prepare():
+    images = preprocessing.load_images(data_folder)
+    train, test = preprocessing.split(images, 0.85)
+    train = preprocessing.process_dataset(train, dimensions)
 
-table = prettytable.PrettyTable(
-    ['Actual', 'Predicted value', 'Predicted label'])
+    preprocessing.save_images(train_folder, train)
+    preprocessing.save_images(test_folder, test)
 
-predictions = model.predict(x_test)
-for actual, predicted in zip(y_test, predictions):
-    table.add_row([actual, int(predicted > 0.5), predicted])
 
-print(table)
+def encode(labels: List[str]) -> np.ndarray:
+    return np.array([mapping.index(label.upper()) for label in labels])
+
+
+def decode(predicted: np.ndarray) -> List[str]:
+    encoded = np.argmax(predicted, axis=1)
+    return [mapping[index].upper() for index in encoded]
+
+
+def train():
+    network = nn.NeuralNetwork(n_classes, shape)
+
+    dataset = preprocessing.load_merged_images(train_folder)
+
+    x = []
+    y = []
+    for label, images in dataset.items():
+        y.extend([label for _ in images])
+        x.extend(images)
+
+    x = np.array([image[:, :, np.newaxis] for image in x])
+    y = encode(y)
+
+    network.fit(x, y, epochs, batch_size)
+
+    network.save_model(model_save_location)
+
+
+def test():
+    network = nn.NeuralNetwork(n_classes, shape)
+    network.load_model(model_save_location)
+
+    images = preprocessing.load_merged_images(test_folder)
+    images = preprocessing.process_dataset(images, dimensions)
+
+    x = []
+    y = []
+    for label, images in images.items():
+        y.extend([label for _ in images])
+        x.extend(images)
+
+    x = np.array([image[:, :, np.newaxis] for image in x])
+
+    predicted = network.predict(x)
+    predicted = decode(predicted)
+
+    table = prettytable.PrettyTable()
+    table.add_column("Actual", y)
+    table.add_column("Predicted", predicted)
+    print(table)
+
+    correctness = [x == y for x, y in zip(y, predicted)]
+
+    total = len(y)
+    correct = correctness.count(True)
+
+    print(
+        f'Recognizing {total} images: {correct} were recognized correctly ({correct / total * 100}%)')
+
+
+prepare()
+train()
+test()
