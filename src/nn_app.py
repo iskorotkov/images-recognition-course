@@ -1,14 +1,23 @@
+import os
 from typing import List
 import preprocessing
 import prettytable
 import nn
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+
+matplotlib.use('tkagg')
 
 
 data_folder = './data/images'
 train_folder = './data/train'
-test_folder = './data/val'
+val_folder = './data/val'
+test_folder = './data/test'
 model_save_location = './models/nn'
+
+train_val_split = 1
 
 dimensions = (64, 64)
 shape = (dimensions[0], dimensions[1], 1)
@@ -22,11 +31,11 @@ mapping = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def prepare():
     images = preprocessing.load_images(data_folder)
-    train, test = preprocessing.split(images, 0.85)
+    train, val = preprocessing.split(images, train_val_split)
     train = preprocessing.process_dataset(train, dimensions)
 
     preprocessing.save_images(train_folder, train)
-    preprocessing.save_images(test_folder, test)
+    preprocessing.save_images(val_folder, val)
 
 
 def encode(labels: List[str]) -> np.ndarray:
@@ -57,11 +66,11 @@ def train():
     network.save_model(model_save_location)
 
 
-def test():
+def validate():
     network = nn.NeuralNetwork(n_classes, shape)
     network.load_model(model_save_location)
 
-    images = preprocessing.load_merged_images(test_folder)
+    images = preprocessing.load_merged_images(val_folder)
     images = preprocessing.process_dataset(images, dimensions)
 
     x = []
@@ -89,6 +98,40 @@ def test():
         f'Recognizing {total} images: {correct} were recognized correctly ({correct / total * 100}%)')
 
 
-prepare()
-train()
+def test():
+    network = nn.NeuralNetwork(n_classes, shape)
+    network.load_model(model_save_location)
+
+    images = []
+    for dirpath, _, filenames in os.walk(test_folder):
+        for filename in filenames:
+            path = os.path.join(dirpath, filename)
+            image = preprocessing.load_image(path)
+            image = preprocessing.process_image(image, dimensions)
+            images.append(image)
+
+    x = np.array([image[:, :, np.newaxis] for image in images])
+
+    predicted = network.predict(x)
+    predicted = decode(predicted)
+
+    items = list(zip(images, predicted))
+    shown = items # [item for index, item in enumerate(items) if index % 10 == 0] # Shows each 10th image.
+
+    plt.figure('Neural network predictions')
+
+    for index, (image, label) in enumerate(shown):
+        cols = 20
+        rows = (len(shown) + cols - 1) // cols
+
+        plt.subplot(rows, cols, index + 1)
+        plt.title(label)
+        plt.imshow(image, cmap='gray')
+
+    plt.show()
+
+
+# prepare()
+# train()
+# validate()
 test()
